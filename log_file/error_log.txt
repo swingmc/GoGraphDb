@@ -1,0 +1,33 @@
+1620747142193180500::::2021-05-11 23:32:22.1931805 +0800 CST m=+0.006491701::::SchemaInstance init wrong, error: sentence grammer error, sentence: [Vertex]
+1620747434495836500::::2021-05-11 23:37:14.4963402 +0800 CST m=+0.006500901::::SchemaInstance init wrong, error: sentence grammer error, sentence: [Vertex
+]
+1620791078449501100::::2021-05-12 11:44:38.4495011 +0800 CST m=+0.007216201::::SchemaInstance init wrong, error: sentence grammer error, sentence: [Vertex
+]
+1620791333848406000::::2021-05-12 11:48:53.848406 +0800 CST m=+0.007281501::::SchemaInstance init wrong, error: sentence grammer error, sentence: [Vertex
+]
+1620791449685319400::::2021-05-12 11:50:49.6853194 +0800 CST m=+0.008173401::::SchemaInstance init wrong, error: sentence grammer error, sentence: [Vertex
+]
+1620794021216838000::::2021-05-12 12:33:41.216838 +0800 CST m=+0.006077101::::SchemaInstance init wrong, error: strconv.ParseInt: parsing "1\r\n": invalid syntax
+1620794048840633700::::2021-05-12 12:34:08.8406337 +0800 CST m=+0.006400201::::SchemaInstance init wrong, error: strconv.ParseInt: parsing "1\r\n": invalid syntax
+1620794210036959900::::2021-05-12 12:36:50.0369599 +0800 CST m=+0.008972201::::Interpreter command error, command: BEGIN
+
+1620794210068893200::::2021-05-12 12:36:50.0688932 +0800 CST m=+0.040905501::::interpreter change status error: Interpreter command error, command: BEGIN
+
+1620827506379621100::::2021-05-12 21:51:46.3796211 +0800 CST m=+0.047279201::::transaction: 1620827506341351600 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620829813988760100::::2021-05-12 22:30:13.9887601 +0800 CST m=+0.040346601::::transaction: 1620829813956299800 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620834294192166200::::2021-05-12 23:44:54.1921662 +0800 CST m=+0.043469101::::transaction: 1620834294157036600 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620834328208044400::::2021-05-12 23:45:28.2080444 +0800 CST m=+0.045909801::::transaction: 1620834328170680400 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620834386607005800::::2021-05-12 23:46:26.6070058 +0800 CST m=+0.044693501::::transaction: 1620834386570696500 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620834632592627900::::2021-05-12 23:50:32.5926279 +0800 CST m=+0.047542101::::transaction: 1620834632554482600 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620834642441009200::::2021-05-12 23:50:42.4410092 +0800 CST m=+0.042999201::::transaction: 1620834642405956900 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620835423342876600::::2021-05-13 00:03:43.3428766 +0800 CST m=+0.044068601::::transaction: 1620835423306915600 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620837190680739700::::2021-05-13 00:33:10.6807397 +0800 CST m=+0.046416701::::transaction: 1620837190642358400 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620837203710108900::::2021-05-13 00:33:23.7101089 +0800 CST m=+0.045392601::::transaction: 1620837203673481900 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620837210304609400::::2021-05-13 00:33:30.3046094 +0800 CST m=+0.042308001::::transaction: 1620837210270606700 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620837558859280500::::2021-05-13 00:39:18.8592805 +0800 CST m=+0.045945501::::transaction: 1620837558821894000 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620837669001468300::::2021-05-13 00:41:09.0014683 +0800 CST m=+0.044797001::::transaction: 1620837668965394400 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620837917095848100::::2021-05-13 00:45:17.0958481 +0800 CST m=+0.045006701::::transaction: 1620837917059620700 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620837937125414500::::2021-05-13 00:45:37.1254145 +0800 CST m=+0.045487701::::transaction: 1620837937088662900 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620837977431361400::::2021-05-13 00:46:17.4313614 +0800 CST m=+0.045437101::::transaction: 1620837977395210100 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620838140609164000::::2021-05-13 00:49:00.609164 +0800 CST m=+0.046217301::::transaction: 1620838140571587500 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}
+1620838279496754400::::2021-05-13 00:51:19.4967544 +0800 CST m=+0.044964701::::transaction: 1620838279460305300 exec wrong, error: &{%!V(string=ParseInt) %!V(string=event) %!V(*errors.errorString=&{invalid syntax})}

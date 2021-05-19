@@ -1,0 +1,138 @@
+@startuml
+ class EdgeSkipList {
+  head *EdgeSkipListNode
+  tail *EdgeSkipListNode
+  size int
+  levels int
+  Size() int
+  Levels() int
+  newlevels()
+  Get(versionId int64, score int64) *db_model.Edge
+  Insert(versionId int64, score int64, vertex *db_model.Edge) error
+  Remove(versionId int64, score int64) *db_model.Edge
+  insertAfter(pNode *EdgeSkipListNode, curNode *EdgeSkipListNode)
+  findNode(versionId int64, score int64) *EdgeSkipListNode
+  Print()
+  Flush()
+  Wait()
+  CleanStatus()
+}
+
+ class EdgeSkipListNode {
+  score int64
+  Edge *db_model.Edge
+  VersionId int64
+  LastReadVersionId int64
+  t *transaction.Transaction
+  changed int32
+  next *EdgeSkipListNode
+  pre *EdgeSkipListNode
+  up *EdgeSkipListNode
+  down *EdgeSkipListNode
+  NextVersion *EdgeSkipListNode
+  Readable (versionid int64) int32
+  Writeable (versionid int64) int32
+  FindLatestVersion() EdgeSkipListNode
+  Read (versionid int64) EdgeSkipListNode
+  CreateNextVersion (versionid int64, Edge ) error
+  Remove (versionid int64) error
+} 
+
+
+ class VertexSkipList {
+  head *VertexSkipListNode
+  tail *VertexSkipListNode
+  size int
+  levels int
+  Size() int
+  Levels() int
+  newlevels()
+  Get(versionId int64, score int64) *db_model.Vertex
+  Insert(versionId int64, score int64, vertex *db_model.Vertex) error
+  Remove(versionId int64, score int64) *db_model.Vertex
+  insertAfter(pNode *VertexSkipListNode, curNode *VertexSkipListNode)
+  findNode(versionId int64, score int64) *VertexSkipListNode
+  Print()
+  Flush()
+  Wait()
+  CleanStatus()
+} 
+
+
+ class VertexSkipListNode {
+  score int64
+  vertex *db_model.Vertex
+  VersionId int64
+  LastReadVersionId int64
+  t *transaction.Transaction
+  changed int32
+  next *VertexSkipListNode
+  pre *VertexSkipListNode
+  up *VertexSkipListNode
+  down *VertexSkipListNode
+  NextVersion *VertexSkipListNode
+  Readable (versionid int64) int32
+  Writeable (versionid int64) int32
+  FindLatestVersion() VertexSkipListNode
+  Read (versionid int64) VertexSkipListNode
+  CreateNextVersion (versionid int64, Vertex) error
+  Remove (versionid int64) error
+} 
+
+
+ class Edge {
+  Idntifier conf.EdgeIdentifier
+  EdgeType int32
+  Start conf.VertexIdentifier
+  End conf.VertexIdentifier
+  Properties map[string]string
+  Flush (versionid int64, changed int32) (error)
+    FlushAsUndoBase (versionid int64, changed int32) (error)
+} 
+
+ class Vertex {
+  Idntifier conf.VertexIdentifier
+  VertexType int32
+  OutE map[conf.EdgeIdentifier]bool
+  InE map[conf.EdgeIdentifier]bool
+  Properties map[string]string
+  Flush (versionid int64, changed int32) (error)
+  FlushAsUndoBase (versionid int64, changed int32) (error)
+} 
+
+
+ class Interpreter {
+  transaction *transaction.Transaction
+  ExeDmlFile(f *os.File) error
+    ChangeStatus(command string) error
+    ExecuteSentence(subject string, verb string, object string) (int32, error)
+    judgeCommand(subject string, verb string, object string) (int32, error)
+    exec(command int32, subject string, verb string, object string) error
+} 
+
+
+ class Transaction {
+  Version int64
+  Status int32
+  ReadOnly bool
+  Block chan int
+  VertexBind map[string]int64
+  EdgeBind map[string]int64
+  VertexSetBind map[string][map[int64]*db_model.Vertex]
+  EdgeSetBind map[string][map[int64]*db_model.Edge]
+  End() error
+  RollBack() error
+  IsVertex(str string) bool
+  IsEdge(str string) bool
+}
+
+Interpreter "1" o-- "1" Transaction :aggregation
+VertexSkipList "1" *-- "many" VertexSkipListNode  :contains
+EdgeSkipList "1" *-- "many" EdgeSkipListNode :contains
+VertexSkipListNode "1" *-- "1" Vertex  :contains
+EdgeSkipListNode "1" *-- "1" Edge  :contains
+VertexSkipListNode "1" o-- "1" Transaction  :aggregation
+EdgeSkipListNode "1" o-- "1" Transaction  :aggregation
+Transaction "1" o-- "many" Vertex :aggregation
+Transaction "1" o-- "many" Edge :aggregation
+@enduml

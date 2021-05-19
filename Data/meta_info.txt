@@ -1,0 +1,10 @@
+Vertex
+Person::::1
+Event::::2
+Place::::3
+Time::::4
+Edge
+Friend::::1
+Include::::2
+OccurIn::::3
+HappendOn::::4

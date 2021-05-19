@@ -1,0 +1,13 @@
+BEGIN
+ming::::_::::Person
+ming::::name::::ming
+nanjing::::_::::Place
+nanjing::::name::::NanJing
+2021-5-1::::_::::Time
+2021-5-1::::name::::2021年5月1日
+holiday_play::::_::::Event
+holiday_play::::content::::游玩
+holiday_play::::Include::::ming
+holiday_play::::HappendOn::::2021-5-1
+holiday_plau::::OccurIn::::nanjing
+END

@@ -1,0 +1,91 @@
+@startuml
+namespace  {
+ class EdgeSkipList {
+  head *EdgeSkipListNode
+  tail *EdgeSkipListNode
+  size int
+  levels int
+} 
+}
+namespace  {
+ class EdgeSkipListNode {
+  score int64
+  Edge *db_model.Edge
+  VersionId int64
+  LastReadVersionId int64
+  t *transaction.Transaction
+  changed int32
+  next *EdgeSkipListNode
+  pre *EdgeSkipListNode
+  up *EdgeSkipListNode
+  down *EdgeSkipListNode
+  NextVersion *EdgeSkipListNode
+} 
+}
+namespace  {
+ class VertexSkipList {
+  head *VertexSkipListNode
+  tail *VertexSkipListNode
+  size int
+  levels int
+} 
+}
+namespace  {
+ class VertexSkipListNode {
+  score int64
+  vertex *db_model.Vertex
+  VersionId int64
+  LastReadVersionId int64
+  t *transaction.Transaction
+  changed int32
+  next *VertexSkipListNode
+  pre *VertexSkipListNode
+  up *VertexSkipListNode
+  down *VertexSkipListNode
+  NextVersion *VertexSkipListNode
+} 
+}
+namespace  {
+ class Edge {
+  Idntifier conf.EdgeIdentifier
+  EdgeType int32
+  Start conf.VertexIdentifier
+  End conf.VertexIdentifier
+  Properties map[string]string
+} 
+}
+namespace  {
+ class Vertex {
+  Idntifier conf.VertexIdentifier
+  VertexType int32
+  OutE map[conf.EdgeIdentifier]bool
+  InE map[conf.EdgeIdentifier]bool
+  Properties map[string]string
+} 
+}
+
+
+namespace  {
+ class Schema {
+  VertexTypeMap map[string]int32
+  EdgeTypeMap map[string]int32
+} 
+}
+namespace  {
+ class Interpreter {
+  transaction *transaction.Transaction
+} 
+}
+namespace  {
+ class Transaction {
+  Version int64
+  Status int32
+  ReadOnly bool
+  Block chan int
+  VertexBind map[string]int64
+  EdgeBind map[string]int64
+  VertexSetBind map[string] (map[int64]*db_model.Vertex)
+  EdgeSetBind map[string] (map[int64]*db_model.Edge)
+} 
+}
+@enduml

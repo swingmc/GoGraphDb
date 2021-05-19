@@ -1,0 +1,27 @@
+BEGIN
+#Drump发了一条动态：让印度再次伟大
+Drump::::@CV::::User
+blog::::@CV::::Trend
+Drump::::write::::blog
+write::::@SET::::Create
+blog::::@SVP::::content:MAKE INDIA GREAT AGAIN!
+#三个用户A、B、C关注了Drump
+Aing::::@CV::::User
+Bing::::@CV::::User
+Cing::::@CV::::User
+Aing::::_::::Drump
+_::::@SET::::Follow
+Bing::::_::::Drump
+_::::@SET::::Follow
+Cing::::_::::Drump
+_::::@SET::::Follow
+#AB点赞了该动态，B和C转发了该动态
+Aing::::_::::Trend
+_::::@SET::::Like
+Bing::::_::::Trend
+_::::@SET::::Like
+Bing::::_::::Trend
+_::::@SET::::Forward
+Cing::::_::::Trend
+_::::@SET::::Forward
+

@@ -1,0 +1,5 @@
+BEGIN
+person::::@CV::::Person
+event::::@CV::::Event
+nanjing::::@CV::::Place
+END

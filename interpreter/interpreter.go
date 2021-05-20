@@ -12,10 +12,6 @@ import (
 	"strings"
 )
 
-var (
-	TransactionCounter = make(chan int64, 10)
-)
-
 type Interpreter struct {
 	transaction *transaction.Transaction
 }
@@ -62,8 +58,6 @@ func (i *Interpreter) ChangeStatus(command string) error{
 	switch command {
 	case conf.InterpreterCommand_StartTransaction:
 		{
-			//并发控制 数据落盘时避免新的事务开始
-			<-transaction.StopTheWorld
 			if i.transaction != nil {
 				err := errors.New("Transation MultiStart")
 				log.CtxError(context.Background(), err.Error())
@@ -72,9 +66,8 @@ func (i *Interpreter) ChangeStatus(command string) error{
 			i.transaction = transaction.NewTransaction()
 			transaction.TransactionGetter[i.transaction.Version] = i.transaction
 			log.CtxInfo(context.Background(),"start Transaction, version: %+v", i.transaction.Version)
-			//事务计数
-			TransactionCounter <- 0
 		}
+		/*
 	case conf.InterpreterCommand_StartReadOnlyTransaction:
 		{
 			//并发控制 数据落盘时避免新的事务开始
@@ -87,6 +80,7 @@ func (i *Interpreter) ChangeStatus(command string) error{
 			i.transaction = transaction.NewReadOnlyTransaction()
 			log.CtxInfo(context.Background(),"start read_only Transaction, version: %+v", i.transaction.Version)
 		}
+		 */
 	case conf.InterpreterCommand_EndTransaction:
 		{
 			if i.transaction == nil {

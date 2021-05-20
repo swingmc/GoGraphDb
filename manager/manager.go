@@ -2,22 +2,22 @@ package manager
 
 import (
 	"GoGraphDb/conf"
-	"GoGraphDb/interpreter"
 	"GoGraphDb/log"
-	"GoGraphDb/transaction"
 	"GoGraphDb/memory_cache"
+	"GoGraphDb/transaction"
 	"GoGraphDb/utils"
 	"context"
 )
 
 func init() {
+	log.CtxInfo(context.Background(),"manager init")
 	go GcTransactionCount()
 }
 
 func GcTransactionCount() {
 	i := 0
 	for {
-		<- interpreter.TransactionCounter
+		<- transaction.TransactionCounter
 		i = i+1
 		if i >= conf.GcTransactionNum{
 			err := Flush()
@@ -37,7 +37,11 @@ func Wait() {
 
 func Flush() error{
 	log.CtxInfo(context.Background(),"start flush time: %+v", utils.GenTimeStamp())
-
+	if transaction.StopTheWorld != nil{
+		if _ ,isClosed := <- transaction.StopTheWorld; isClosed{
+			close(transaction.StopTheWorld)
+		}
+	}
 	transaction.StopTheWorld = make(chan int)
 	Wait()
 	log.CtxInfo(context.Background(),"all transaction done time: %+v", utils.GenTimeStamp())

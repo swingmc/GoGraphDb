@@ -1,8 +1,18 @@
 package main
 
 import (
-	"GoGraphDb/db/db_model"
+	_"GoGraphDb/db/db_model"
+	_"GoGraphDb/db/dal"
+	_"GoGraphDb/log"
+	_"GoGraphDb/db"
+	"GoGraphDb/log"
+	"GoGraphDb/memory_cache"
+	"GoGraphDb/transaction"
+	"context"
 	"fmt"
+	"time"
+	_"GoGraphDb/manager"
+	_"GoGraphDb/interpreter"
 )
 
 func main(){
@@ -66,6 +76,27 @@ func main(){
 	//manager.Flush()
 	 */
 
-	v := db_model.Vertex{}
-	fmt.Println(v.Idntifier)
+	timeAvg := int64(0)
+	num := int64(10)
+	i := int64(0)
+	for i<num {
+		//j := i
+		t := transaction.NewTransaction()
+		start := int64(time.Now().Nanosecond())
+		go func() {
+			_,err := memory_cache.CreateVertex(t.Version)
+			if err != nil {
+				log.CtxError(context.Background(),"err: %+v",err)
+			}
+			end := int64(time.Now().Nanosecond())
+			length := (end - start)/num
+			timeAvg = timeAvg + length
+			fmt.Println(timeAvg)
+		}()
+		i++
+	}
+	time.Sleep(time.Second*5)
+	//memory_cache.VertexTree.Flush()
+	fmt.Println(timeAvg)
+
 }

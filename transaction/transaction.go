@@ -22,13 +22,17 @@ type Transaction struct {
 }
 
 func NewTransaction() *Transaction{
+	//并发控制 数据落盘时避免新的事务开始
+	<-StopTheWorld
 	t := &Transaction{
 		Version: utils.GenTimeStamp(),
 		VertexBind: map[string]int64{},
 		EdgeBind: map[string]int64{},
 		Block: make(chan int, 10),
 	}
-	TransactionGetter[t.Version] = t
+	AddTransaction(t.Version, t)
+	//事务计数
+	TransactionCounter <- 0
 	return t
 }
 

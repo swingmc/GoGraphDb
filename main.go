@@ -77,7 +77,7 @@ func main(){
 	 */
 
 	timeAvg := int64(0)
-	num := int64(10)
+	num := int64(5000)
 	i := int64(0)
 	for i<num {
 		//j := i
@@ -87,11 +87,16 @@ func main(){
 			_,err := memory_cache.CreateVertex(t.Version)
 			if err != nil {
 				log.CtxError(context.Background(),"err: %+v",err)
+				t.RollBack()
 			}
+			t.End()
 			end := int64(time.Now().Nanosecond())
 			length := (end - start)/num
+			if length < 0 {
+				return
+			}
 			timeAvg = timeAvg + length
-			fmt.Println(timeAvg)
+			fmt.Println(length*num)
 		}()
 		i++
 	}

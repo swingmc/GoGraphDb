@@ -30,7 +30,7 @@ func NewTransaction() *Transaction{
 		EdgeBind: map[string]int64{},
 		Block: make(chan int, 10),
 	}
-	AddTransaction(t.Version, t)
+	addTransaction(t.Version, t)
 	//事务计数
 	TransactionCounter <- 0
 	return t

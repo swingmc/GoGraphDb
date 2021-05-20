@@ -7,6 +7,7 @@ import (
 	"GoGraphDb/transaction"
 	"GoGraphDb/utils"
 	"context"
+	"time"
 )
 
 func init() {
@@ -43,10 +44,12 @@ func Flush() error{
 		}
 	}
 	transaction.StopTheWorld = make(chan int)
+	//沉睡100ms防止死锁
+	time.Sleep(100*time.Microsecond)
 	Wait()
 	log.CtxInfo(context.Background(),"all transaction done time: %+v", utils.GenTimeStamp())
 	log.UndoBegin()
-	memory_cache.VertexTree.Print()
+	//memory_cache.VertexTree.Print()
 	memory_cache.VertexTree.Flush()
 	//memory_cache.EdgeTree.Flush()
 	log.UndoCommit()

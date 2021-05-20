@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	TransactionCounter = make(chan int64, 10)
+	TransactionCounter = make(chan int64, 10000)
 	lock = sync.RWMutex{}
 )
 
@@ -28,7 +28,7 @@ func GetTransaction(versionId int64) *Transaction{
 	return t
 }
 
-func AddTransaction(versionId int64, transaction *Transaction) {
+func addTransaction(versionId int64, transaction *Transaction) {
 	lock.Lock()
 	TransactionGetter[versionId] = transaction
 	lock.Unlock()
@@ -38,4 +38,20 @@ func CleanTransaction() {
 	lock.Lock()
 	TransactionGetter = map[int64]*Transaction{}
 	lock.Unlock()
+}
+
+func LockTransactionMap() {
+	lock.Lock()
+}
+
+func UnlockTransactionMap(){
+	lock.Unlock()
+}
+
+func RLockTransactionMap() {
+	lock.RLock()
+}
+
+func RUnlockTransactionMap(){
+	lock.RUnlock()
 }

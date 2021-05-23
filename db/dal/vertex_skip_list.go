@@ -54,8 +54,8 @@ func (sl *VertexSkipList) Levels() int {
 
 func (sl *VertexSkipList) Get(versionId int64, score int64) *db_model.Vertex {
 	node := sl.findNode(versionId ,score)
-	if node.score == score && node.changed != Removed{
-		return node.vertex
+	if node.score == score{
+		return node.Read(versionId).vertex
 	} else {
 		return nil
 	}

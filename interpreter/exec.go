@@ -36,26 +36,12 @@ func (i *Interpreter) judgeCommand(subject string, verb string, object string) (
 	if len(subject) == 0 || len(verb) == 0 || len(object) == 0 {
 		return 0, errors.New("has nil word")
 	}
-	switch verb {
-	case conf.GRAMMER_BIND_VERTEX_COMMAND:
-		return conf.GRAMMER_BIND_VERTEX, nil
-	case conf.GRAMMER_CREATE_VERTEX_COMMAND:
-		return conf.GRAMMER_CREATE_VERTEX, nil
-	case conf.GRAMMER_BIND_EDGE_COMMAND:
-		return conf.GRAMMER_BIND_EDGE, nil
-	case conf.GRAMMER_SET_VERTEX_TYPE_COMMAND:
-		return conf.GRAMMER_SET_VERTEX_TYPE, nil
-	case conf.GRAMMER_SET_EDGE_TYPE_COMMAND:
-		return conf.GRAMMER_SET_EDGE_TYPE, nil
+	commad, ok := conf.VerbMap[verb]
+	if ok {
+		return commad, nil
 	}
 	if i.transaction.IsVertex(subject) && i.transaction.IsEdge(verb) && i.transaction.IsVertex(object) {
 		return conf.GRAMMER_CREATE_EDGE, nil
-	}
-	if i.transaction.IsVertex(subject) {
-		return conf.GRAMMER_SET_VERTEX_PROPERTY, nil
-	}
-	if i.transaction.IsEdge(subject) {
-		return conf.GRAMMER_SET_EDGE_PROPERTY, nil
 	}
 	return 0, errors.New("no match command!")
 }

@@ -44,8 +44,8 @@ func (sl *EdgeSkipList) Levels() int {
 
 func (sl *EdgeSkipList) Get(versionId int64, score int64) *db_model.Edge {
 	node := sl.findNode(versionId ,score)
-	if node.score == score && node.changed != Removed{
-		return node.Edge
+	if node.score == score{
+		return node.Read(versionId).Edge
 	} else {
 		return nil
 	}

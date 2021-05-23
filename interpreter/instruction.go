@@ -23,6 +23,8 @@ func init() {
 	instructionMap[conf.GRAMMER_SET_VERTEX_PROPERTY] = setVertexProperty
 	instructionMap[conf.GRAMMER_REMOVE_VERTEX] = removeVertex
 	instructionMap[conf.GRAMMER_FILTER_VERTEX_BY_TYPE] = filterVertexByType
+	instructionMap[conf.GRAMMER_IN_EDGE] = inEdge
+	instructionMap[conf.GRAMMER_OUT_EDGE] = OutEdge
 	instructionMap[conf.GRAMMER_SHOW_VERTEX] = showVertex
 
 	instructionMap[conf.GRAMMER_BIND_EDGE] = bindEdge
@@ -31,6 +33,8 @@ func init() {
 	instructionMap[conf.GRAMMER_SET_EDGE_PROPERTY] = setEdgeProperty
 	instructionMap[conf.GRAMMER_REMOVE_EDGE] = removeEdge
 	instructionMap[conf.GRAMMER_FILTER_EDGE_BY_TYPE] = filterEdgeByType
+	instructionMap[conf.GRAMMER_EDGE_START] = edgeStart
+	instructionMap[conf.GRAMMER_EDGE_END] = edgeEnd
 	instructionMap[conf.GRAMMER_SHOW_EDGE] = showEdge
 }
 
@@ -139,6 +143,24 @@ func inEdge(t *transaction.Transaction, subject string, verb string, object stri
 	edges := map[int64]*db_model.Edge{}
 	for _, v := range vs{
 		for id, _ := range v.InE{
+			edge := memory_cache.EdgeTree.Get(t.Version, int64(id))
+			if edge != nil{
+				edges[int64(id)] = edge
+			}
+		}
+	}
+	t.EdgeWrite(object, edges)
+	return nil
+}
+
+func OutEdge(t *transaction.Transaction, subject string, verb string, object string)error{
+	vs, ok := t.VertexRead(subject)
+	if !ok {
+		return errors.New(fmt.Sprintf("vertexSet not defined: %+v", subject))
+	}
+	edges := map[int64]*db_model.Edge{}
+	for _, v := range vs{
+		for id, _ := range v.OutE{
 			edge := memory_cache.EdgeTree.Get(t.Version, int64(id))
 			if edge != nil{
 				edges[int64(id)] = edge

@@ -70,6 +70,7 @@ func (sl *VertexSkipList) Insert(versionId int64, score int64, vertex *db_model.
 		if err != nil {
 			return err
 		}
+		f.changed = conf.Modify_Changed
 		return nil
 	}
 	//curNode := new(VertexSkipListNode)
@@ -106,18 +107,21 @@ func (sl *VertexSkipList) Insert(versionId int64, score int64, vertex *db_model.
 	return nil
 }
 
-func (sl *VertexSkipList) Remove(versionId int64, score int64) *db_model.Vertex {
+func (sl *VertexSkipList) Remove(versionId int64, score int64) error{
 	f := sl.findNode(versionId, score)
-	if f.score != score || f.changed == Removed{
+	if f.score != score || f.changed == conf.Modify_Removed{
 		return nil
 	}
-	v := f.Read(versionId).vertex
 
+	err := f.Remove(versionId)
+	if err != nil{
+		return err
+	}
 	for f != nil {
-		f.changed = Removed
+		f.changed = conf.Modify_Removed
 		f = f.up
 	}
-	return v
+	return nil
 }
 
 func (sl *VertexSkipList) newlevels() {

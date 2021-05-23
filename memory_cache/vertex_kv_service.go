@@ -31,7 +31,7 @@ func CreateVertex(versionId int64) (int64,error){
 	return id, nil
 }
 
-func RemoveVertex(versionId int64, id int64) *db_model.Vertex {
+func RemoveVertex(versionId int64, id int64) error{
 	return VertexTree.Remove(versionId, id)
 }
 

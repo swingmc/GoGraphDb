@@ -96,18 +96,21 @@ func (sl *EdgeSkipList) Insert(versionId int64, score int64, Edge *db_model.Edge
 	return nil
 }
 
-func (sl *EdgeSkipList) Remove(versionId int64, score int64) *db_model.Edge {
+func (sl *EdgeSkipList) Remove(versionId int64, score int64) error{
 	f := sl.findNode(versionId, score)
-	if f.score != score || f.changed == Removed{
+	if f.score != score || f.changed == conf.Modify_Removed{
 		return nil
 	}
-	v := f.Read(versionId).Edge
 
+	err := f.Remove(versionId)
+	if err != nil {
+		return err
+	}
 	for f != nil {
-		f.changed = Removed
+		f.changed = conf.Modify_Removed
 		f = f.up
 	}
-	return v
+	return nil
 }
 
 func (sl *EdgeSkipList) newlevels() {

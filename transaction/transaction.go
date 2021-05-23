@@ -11,12 +11,13 @@ var (
 )
 
 type Transaction struct {
-	Version        int64
-	Status         int32
-	ReadOnly       bool
-	Block          chan int
-	VertexSetBind  map[string](map[int64]*db_model.Vertex)
-	EdgeSetBind  map[string](map[int64]*db_model.Edge)
+	Version       int64
+	Status        int32
+	ReadOnly      bool
+	Block         chan int
+	DataChan      chan interface{}
+	VertexSetBind map[string](map[int64]*db_model.Vertex)
+	EdgeSetBind   map[string](map[int64]*db_model.Edge)
 }
 
 func NewTransaction() *Transaction{
@@ -27,6 +28,7 @@ func NewTransaction() *Transaction{
 		VertexSetBind: map[string](map[int64]*db_model.Vertex){},
 		EdgeSetBind: map[string](map[int64]*db_model.Edge){},
 		Block: make(chan int, 10),
+		DataChan: make(chan interface{}, 100),
 	}
 	addTransaction(t.Version, t)
 	//事务计数

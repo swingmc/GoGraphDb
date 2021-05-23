@@ -31,7 +31,7 @@ func CreateEdge(versionId int64) (int64,error){
 	return id, nil
 }
 
-func RemoveEdge(versionId int64, id int64) *db_model.Edge {
+func RemoveEdge(versionId int64, id int64) error{
 	return EdgeTree.Remove(versionId, id)
 }
 

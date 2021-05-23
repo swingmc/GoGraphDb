@@ -4,11 +4,9 @@ import (
 	"GoGraphDb/conf"
 	"GoGraphDb/db/db_model"
 	"GoGraphDb/db/db_schema"
-	"GoGraphDb/log"
 	"GoGraphDb/memory_cache"
 	"GoGraphDb/transaction"
 	"GoGraphDb/utils"
-	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -24,6 +22,7 @@ func init() {
 	instructionMap[conf.GRAMMER_SET_VERTEX_TYPE] = setVertexType
 	instructionMap[conf.GRAMMER_SET_VERTEX_PROPERTY] = setVertexProperty
 	instructionMap[conf.GRAMMER_REMOVE_VERTEX] = removeVertex
+	instructionMap[conf.GRAMMER_FILTER_VERTEX_BY_TYPE] = filterVertexByType
 	instructionMap[conf.GRAMMER_SHOW_VERTEX] = showVertex
 
 	instructionMap[conf.GRAMMER_BIND_EDGE] = bindEdge
@@ -31,6 +30,7 @@ func init() {
 	instructionMap[conf.GRAMMER_SET_EDGE_TYPE] = setEdgeType
 	instructionMap[conf.GRAMMER_SET_EDGE_PROPERTY] = setEdgeProperty
 	instructionMap[conf.GRAMMER_REMOVE_EDGE] = removeEdge
+	instructionMap[conf.GRAMMER_FILTER_EDGE_BY_TYPE] = filterEdgeByType
 	instructionMap[conf.GRAMMER_SHOW_EDGE] = showEdge
 }
 
@@ -39,7 +39,8 @@ func bindVertex(t *transaction.Transaction, subject string, verb string, object 
 	if err != nil {
 		return err
 	}
-	t.VertexSetBind[subject] = map[int64]*db_model.Vertex{id : memory_cache.VertexTree.Get(t.Version, id)}
+	t.VertexWrite(subject, map[int64]*db_model.Vertex{id : memory_cache.VertexTree.Get(t.Version, id)})
+	//t.vertexSetBind[subject] = map[int64]*db_model.Vertex{id : memory_cache.VertexTree.Get(t.Version, id)}
 	return nil
 }
 
@@ -56,12 +57,13 @@ func createVertex(t *transaction.Transaction, subject string, verb string, objec
 	if err != nil {
 		return err
 	}
-	t.VertexSetBind[subject] = map[int64]*db_model.Vertex{id : memory_cache.VertexTree.Get(t.Version, id)}
+	t.VertexWrite(subject, map[int64]*db_model.Vertex{id : memory_cache.VertexTree.Get(t.Version, id)})
+	//t.vertexSetBind[subject] = map[int64]*db_model.Vertex{id : memory_cache.VertexTree.Get(t.Version, id)}
 	return nil
 }
 
 func setVertexType(t *transaction.Transaction, subject string, verb string, object string)error{
-	vs, ok := t.VertexSetBind[subject]
+	vs, ok := t.VertexRead(subject)
 	if !ok {
 		return errors.New(fmt.Sprintf("set Vertex %+v type error, not exist", subject))
 	}
@@ -79,7 +81,7 @@ func setVertexType(t *transaction.Transaction, subject string, verb string, obje
 }
 
 func setVertexProperty(t *transaction.Transaction, subject string, verb string, object string)error{
-	vs, ok := t.VertexSetBind[subject]
+	vs, ok := t.VertexRead(subject)
 	if !ok {
 		return errors.New(fmt.Sprintf("set Vertex %+v properties error, not exist", subject))
 	}
@@ -97,9 +99,9 @@ func setVertexProperty(t *transaction.Transaction, subject string, verb string, 
 }
 
 func removeVertex(t *transaction.Transaction, subject string, verb string, object string)error{
-	vs, ok := t.VertexSetBind[subject]
+	vs, ok := t.VertexRead(subject)
 	if !ok {
-		log.CtxWarn(context.Background(), "remove nil vertexSet: %+v", subject)
+		return errors.New(fmt.Sprintf("vertexSet not defined: %+v", subject))
 	}
 	for id, _ := range vs {
 		err := memory_cache.RemoveVertex(t.Version, id)
@@ -110,8 +112,45 @@ func removeVertex(t *transaction.Transaction, subject string, verb string, objec
 	return nil
 }
 
+func filterVertexByType(t *transaction.Transaction, subject string, verb string, object string)error{
+	vs, ok := t.VertexRead(subject)
+	if !ok {
+		return errors.New(fmt.Sprintf("vertexSet not defined: %+v", subject))
+	}
+	vertexType, err := utils.ParseStringToInt32(object)
+	if err != nil {
+		return err
+	}
+	newVs := map[int64]*db_model.Vertex{}
+	for id, vertex := range vs{
+		if vertex.VertexType == vertexType{
+			newVs[id] = vertex
+		}
+	}
+	t.VertexWrite(subject, newVs)
+	return nil
+}
+
+func inEdge(t *transaction.Transaction, subject string, verb string, object string)error{
+	vs, ok := t.VertexRead(subject)
+	if !ok {
+		return errors.New(fmt.Sprintf("vertexSet not defined: %+v", subject))
+	}
+	edges := map[int64]*db_model.Edge{}
+	for _, v := range vs{
+		for id, _ := range v.InE{
+			edge := memory_cache.EdgeTree.Get(t.Version, int64(id))
+			if edge != nil{
+				edges[int64(id)] = edge
+			}
+		}
+	}
+	t.EdgeWrite(object, edges)
+	return nil
+}
+
 func showVertex(t *transaction.Transaction, subject string, verb string, object string)error{
-	vs, ok := t.VertexSetBind[subject]
+	vs, ok := t.VertexRead(subject)
 	if !ok {
 		return errors.New(fmt.Sprintf("show Vertex %+v error, not exist", subject))
 	}
@@ -125,16 +164,17 @@ func bindEdge(t *transaction.Transaction, subject string, verb string, object st
 	if err != nil {
 		return err
 	}
-	t.EdgeSetBind[subject] = map[int64]*db_model.Edge{id : memory_cache.EdgeTree.Get(t.Version, id)}
+	t.EdgeWrite(subject, map[int64]*db_model.Edge{id : memory_cache.EdgeTree.Get(t.Version, id)})
+	//t.edgeSetBind[subject] = map[int64]*db_model.Edge{id : memory_cache.EdgeTree.Get(t.Version, id)}
 	return nil
 }
 
 func createEdge(t *transaction.Transaction, subject string, verb string, object string)error{
-	startVertexSet, ok := t.VertexSetBind[subject]
+	startVertexSet, ok := t.VertexRead(subject)
 	if !ok {
 		return errors.New(fmt.Sprintf("create edge error, startVertex not exist: " + subject))
 	}
-	endVertexSet, ok := t.VertexSetBind[object]
+	endVertexSet, ok := t.VertexRead(object)
 	if !ok {
 		return errors.New(fmt.Sprintf("create edge error, endVertex not exist: " + object))
 	}
@@ -152,12 +192,12 @@ func createEdge(t *transaction.Transaction, subject string, verb string, object 
 			edgeSet[id] = memory_cache.EdgeTree.Get(t.Version, id)
 		}
 	}
-	t.EdgeSetBind[verb] = edgeSet
+	t.EdgeWrite(verb, edgeSet)
 	return nil
 }
 
 func setEdgeType(t *transaction.Transaction, subject string, verb string, object string)error {
-	es, ok := t.EdgeSetBind[subject]
+	es, ok := t.EdgeRead(subject)
 	if !ok {
 		return errors.New(fmt.Sprintf("set Edge %+v type error, not exist", subject))
 	}
@@ -175,7 +215,7 @@ func setEdgeType(t *transaction.Transaction, subject string, verb string, object
 }
 
 func setEdgeProperty(t *transaction.Transaction, subject string, verb string, object string)error{
-	es, ok := t.VertexSetBind[subject]
+	es, ok := t.EdgeRead(subject)
 	if !ok {
 		return errors.New(fmt.Sprintf("set Edge %+v properties error, not exist", subject))
 	}
@@ -193,9 +233,9 @@ func setEdgeProperty(t *transaction.Transaction, subject string, verb string, ob
 }
 
 func removeEdge(t *transaction.Transaction, subject string, verb string, object string)error{
-	vs, ok := t.EdgeSetBind[subject]
+	vs, ok := t.EdgeRead(subject)
 	if !ok {
-		log.CtxWarn(context.Background(), "remove nil edgeSet: %+v", subject)
+		return errors.New(fmt.Sprintf("edgeSet not defined: %+v", subject))
 	}
 	for id, _ := range vs {
 		err := memory_cache.RemoveEdge(t.Version, id)
@@ -206,8 +246,60 @@ func removeEdge(t *transaction.Transaction, subject string, verb string, object 
 	return nil
 }
 
+func filterEdgeByType(t *transaction.Transaction, subject string, verb string, object string)error{
+	es, ok := t.EdgeRead(subject)
+	if !ok {
+		return errors.New(fmt.Sprintf("edgeSet not defined: %+v", subject))
+	}
+	edgeType, err := utils.ParseStringToInt32(object)
+	if err != nil {
+		return err
+	}
+	newEs := map[int64]*db_model.Edge{}
+	for id, edge := range es {
+		if edge.EdgeType == edgeType {
+			newEs[id] = edge
+		}
+	}
+	t.EdgeWrite(subject, newEs)
+	return nil
+}
+
+func edgeStart(t *transaction.Transaction, subject string, verb string, object string)error{
+	es, ok := t.EdgeRead(subject)
+	if !ok {
+		return errors.New(fmt.Sprintf("edgeSet not defined: %+v", subject))
+	}
+	vertexSet := map[int64]*db_model.Vertex{}
+	for _,edge := range es{
+		vertex := memory_cache.GetVertex(t.Version, int64(edge.Start))
+		if vertex != nil {
+			vertexSet[int64(edge.Start)] = vertex
+		}
+	}
+	t.VertexWrite(object, vertexSet)
+	return nil
+}
+
+func edgeEnd(t *transaction.Transaction, subject string, verb string, object string)error{
+	es, ok := t.EdgeRead(subject)
+	if !ok {
+		return errors.New(fmt.Sprintf("edgeSet not defined: %+v", subject))
+	}
+	vertexSet := map[int64]*db_model.Vertex{}
+	for _,edge := range es{
+		vertex := memory_cache.GetVertex(t.Version, int64(edge.End))
+		if vertex != nil {
+			vertexSet[int64(edge.End)] = vertex
+		}
+	}
+	t.VertexWrite(object, vertexSet)
+	return nil
+}
+
+
 func showEdge(t *transaction.Transaction, subject string, verb string, object string)error{
-	es, ok := t.VertexSetBind[subject]
+	es, ok := t.EdgeRead(subject)
 	if !ok {
 		return errors.New(fmt.Sprintf("show Edge %+v error, not exist", subject))
 	}

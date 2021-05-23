@@ -58,6 +58,8 @@ func (i *Interpreter) ChangeStatus(command string) error{
 	switch command {
 	case conf.InterpreterCommand_StartTransaction:
 		{
+			return i.BeginTransaction()
+			/*
 			if i.transaction != nil {
 				err := errors.New("Transation MultiStart")
 				log.CtxError(context.Background(), err.Error())
@@ -66,6 +68,7 @@ func (i *Interpreter) ChangeStatus(command string) error{
 			i.transaction = transaction.NewTransaction()
 			transaction.TransactionGetter[i.transaction.Version] = i.transaction
 			log.CtxInfo(context.Background(),"start Transaction, version: %+v", i.transaction.Version)
+			 */
 		}
 		/*
 	case conf.InterpreterCommand_StartReadOnlyTransaction:
@@ -83,6 +86,8 @@ func (i *Interpreter) ChangeStatus(command string) error{
 		 */
 	case conf.InterpreterCommand_EndTransaction:
 		{
+			return i.EndTransaction()
+			/*
 			if i.transaction == nil {
 				err := errors.New("No Executing Transation")
 				log.CtxError(context.Background(), err.Error())
@@ -96,6 +101,7 @@ func (i *Interpreter) ChangeStatus(command string) error{
 			}
 			log.CtxInfo(context.Background(),"end Transaction, version: %+v", i.transaction.Version)
 			i.transaction = nil
+			*/
 		}
 	default:
 		{
@@ -107,3 +113,35 @@ func (i *Interpreter) ChangeStatus(command string) error{
 	return nil
 }
 
+func (i *Interpreter) BeginTransaction() error{
+	if i.transaction != nil {
+		err := errors.New("Transation MultiStart")
+		log.CtxError(context.Background(), err.Error())
+		return err
+	}
+	i.transaction = transaction.NewTransaction()
+	log.CtxInfo(context.Background(),"start Transaction, version: %+v", i.transaction.Version)
+	return nil
+}
+
+func (i *Interpreter) EndTransaction() error{
+	if i.transaction == nil {
+		err := errors.New("No Executing Transation")
+		log.CtxError(context.Background(), err.Error())
+		return err
+	}
+	err := i.transaction.End()
+	if err != nil {
+		log.CtxError(context.Background(), err.Error())
+		i.transaction.RollBack()
+		return err
+	}
+	log.CtxInfo(context.Background(),"end Transaction, version: %+v", i.transaction.Version)
+	i.transaction = nil
+	return nil
+}
+
+func (i *Interpreter) RawSql(subject string, verb string, object string) (int32, error) {
+	log.CtxInfo(context.Background(), "Raw Sql: %+v", subject+" "+verb+" "+object)
+	return i.ExecuteSentence(subject, verb, object)
+}

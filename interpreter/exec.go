@@ -2,13 +2,9 @@ package interpreter
 
 import (
 	"GoGraphDb/conf"
-	"GoGraphDb/db/db_schema"
 	"GoGraphDb/log"
-	"GoGraphDb/memory_cache"
-	"GoGraphDb/utils"
 	"context"
 	"errors"
-	"fmt"
 )
 
 func (i *Interpreter) ExecuteSentence(subject string, verb string, object string) (int32, error){
@@ -18,10 +14,17 @@ func (i *Interpreter) ExecuteSentence(subject string, verb string, object string
 	if err != nil {
 		log.CtxError(context.Background(), "command error: %+v, sub: %+v, verb: %+v, object: %+v", err, subject, verb, object)
 	}
+	function, ok := instructionMap[command]
+	if !ok {
+		return 0, errors.New("command not exist!")
+	}
+	/*
 	if IsWriteCommand(command) && i.transaction.ReadOnly {
 		return 0, errors.New("ReadOnlyTransaction exec write command")
 	}
-	err = i.exec(command, subject, verb, object)
+	*/
+	err = function(i.transaction, subject, verb, object)
+	//err = i.exec(command, subject, verb, object)
 	if err != nil {
 		log.CtxError(ctx, "transaction: %+v exec wrong, error: %+V", i.transaction.Version, err)
 		return 0,err
@@ -56,7 +59,7 @@ func (i *Interpreter) judgeCommand(subject string, verb string, object string) (
 	}
 	return 0, errors.New("no match command!")
 }
-
+/*
 func (i *Interpreter) exec(command int32, subject string, verb string, object string) error{
 	switch command {
 	case conf.GRAMMER_BIND_VERTEX:
@@ -109,6 +112,7 @@ func (i *Interpreter) exec(command int32, subject string, verb string, object st
 	}
 	return nil
 }
+*/
 
 //判断写命令
 func IsWriteCommand(n int32) bool{

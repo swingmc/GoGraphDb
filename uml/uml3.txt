@@ -1,0 +1,16 @@
+@startuml
+class Log {
+    infoLogFile  *os.File
+    	warnLogFile  *os.File
+    	errorLogFile *os.File
+    CtxInfo(contex.Context, string, interface{}...)
+    CtxWarn(contex.Context, string, interface{}...)
+    CtxError(contex.Context, string, interface{}...)
+}
+
+class Manager{
+    GoTransactionCount()
+    Wait()
+    Flush() error
+}
+@enduml

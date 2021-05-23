@@ -26,6 +26,10 @@ func (i *Interpreter) ExeDmlFile(f *os.File) error{
 			}
 			break
 		}
+		//过滤掉注释
+		if strings.HasPrefix(row, "#") {
+			log.CtxInfo(context.Background(), "note: %+v", row)
+		}
 		//去除换行符
 		row = strings.ReplaceAll(row, "\r", "")
 		row = strings.ReplaceAll(row, "\n", "")
@@ -36,7 +40,7 @@ func (i *Interpreter) ExeDmlFile(f *os.File) error{
 		units := strings.Split(row, conf.Splitor)
 		//处理事务的开始与结束逻辑
 		if len(units) == 1 {
-			err := i.ChangeStatus(units[0])
+			err := i.changeStatus(units[0])
 			if err != nil {
 				log.CtxError(context.Background(), "interpreter change status error: %+v", err)
 				panic(err)
@@ -54,7 +58,7 @@ func (i *Interpreter) ExeDmlFile(f *os.File) error{
 	return nil
 }
 
-func (i *Interpreter) ChangeStatus(command string) error{
+func (i *Interpreter) changeStatus(command string) error{
 	switch command {
 	case conf.InterpreterCommand_StartTransaction:
 		{

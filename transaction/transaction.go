@@ -15,8 +15,6 @@ type Transaction struct {
 	Status         int32
 	ReadOnly       bool
 	Block          chan int
-	VertexBind     map[string]int64
-	EdgeBind       map[string]int64
 	VertexSetBind  map[string](map[int64]*db_model.Vertex)
 	EdgeSetBind  map[string](map[int64]*db_model.Edge)
 }
@@ -26,8 +24,8 @@ func NewTransaction() *Transaction{
 	<-StopTheWorld
 	t := &Transaction{
 		Version: utils.GenTimeStamp(),
-		VertexBind: map[string]int64{},
-		EdgeBind: map[string]int64{},
+		VertexSetBind: map[string](map[int64]*db_model.Vertex){},
+		EdgeSetBind: map[string](map[int64]*db_model.Edge){},
 		Block: make(chan int, 10),
 	}
 	addTransaction(t.Version, t)
@@ -35,15 +33,16 @@ func NewTransaction() *Transaction{
 	TransactionCounter <- 0
 	return t
 }
-
+/*
 func NewReadOnlyTransaction() *Transaction {
 	return &Transaction{
 		Version:    utils.GenTimeStamp(),
 		ReadOnly:   true,
-		VertexBind: map[string]int64{},
-		EdgeBind:   map[string]int64{},
+		VertexSetBind: map[string](map[int64]*db_model.Vertex){},
+		EdgeSetBind: map[string](map[int64]*db_model.Edge){},
 	}
 }
+*/
 
 func (t *Transaction) End() error{
 	t.Status = conf.TransactionStatus_Complete
@@ -58,7 +57,7 @@ func (t *Transaction) RollBack() error{
 }
 
 func (t *Transaction) IsVertex(str string) bool{
-	_, ok := t.VertexBind[str]
+	_, ok := t.VertexSetBind[str]
 	if !ok {
 		return false
 	}
@@ -66,7 +65,7 @@ func (t *Transaction) IsVertex(str string) bool{
 }
 
 func (t *Transaction) IsEdge(str string) bool{
-	_, ok := t.EdgeBind[str]
+	_, ok := t.EdgeSetBind[str]
 	if !ok {
 		return false
 	}

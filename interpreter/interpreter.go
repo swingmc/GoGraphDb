@@ -26,15 +26,16 @@ func (i *Interpreter) ExeDmlFile(f *os.File) error{
 			}
 			break
 		}
-		//过滤掉注释
-		if strings.HasPrefix(row, "#") {
-			log.CtxInfo(context.Background(), "note: %+v", row)
-		}
 		//去除换行符
 		row = strings.ReplaceAll(row, "\r", "")
 		row = strings.ReplaceAll(row, "\n", "")
 		if len(row) == 0 {
 			log.CtxWarn(context.Background(), "dml file has an empty line")
+			continue
+		}
+		//过滤掉注释
+		if strings.HasPrefix(row, "#") {
+			log.CtxInfo(context.Background(), "note: %+v", row)
 			continue
 		}
 		units := strings.Split(row, conf.Splitor)

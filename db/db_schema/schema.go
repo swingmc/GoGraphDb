@@ -21,7 +21,7 @@ type Schema struct{
 var (
 	schemaFilePath = conf.ProjectRootPath + conf.DataSchemaPath
 
-	SchemaInstance = Schema{
+	schemaInstance = Schema{
 		VertexTypeMap: map[string]int32{},
 		EdgeTypeMap:   map[string]int32{},
 	}
@@ -38,7 +38,7 @@ func init() {
 		row, err := reader.ReadString('\n')
 		if err != nil {
 			if err != io.EOF {
-				log.CtxError(context.Background(), "SchemaInstance init wrong, read data file error: %+v", err)
+				log.CtxError(context.Background(), "schemaInstance init wrong, read data file error: %+v", err)
 				panic(err)
 			}
 			break
@@ -47,7 +47,7 @@ func init() {
 		row = strings.ReplaceAll(row, "\r", "")
 		row = strings.ReplaceAll(row, "\n", "")
 		if len(row) == 0 {
-			log.CtxWarn(context.Background(), "SchemaInstance file has empty line")
+			log.CtxWarn(context.Background(), "schemaInstance file has empty line")
 			continue
 		}
 		if strings.HasPrefix(row ,conf.SchemaFile_VertexFlag) {
@@ -66,39 +66,39 @@ func init() {
 		units := strings.Split(row, conf.Splitor)
 		if len(units) != 2 {
 			err = errors.New(fmt.Sprintf("sentence grammer error, sentence: %+v", units))
-			log.CtxError(context.Background(), "SchemaInstance init wrong, error: %+v", err)
+			log.CtxError(context.Background(), "schemaInstance init wrong, error: %+v", err)
 			panic(err)
 		}
 		if schemaFlag == conf.SchemaFile_VertexFlag {
 			typeId, err := utils.ParseStringToInt32(units[1])
 			if err != nil {
-				log.CtxError(context.Background(), "SchemaInstance init wrong, error: %+v", err)
+				log.CtxError(context.Background(), "schemaInstance init wrong, error: %+v", err)
 				panic(err)
 			}
-			SchemaInstance.VertexTypeMap[units[0]] = typeId
+			schemaInstance.VertexTypeMap[units[0]] = typeId
 		} else {
 			typeId, err := utils.ParseStringToInt32(units[1])
 			if err != nil {
-				log.CtxError(context.Background(), "SchemaInstance init wrong, error: %+v", err)
+				log.CtxError(context.Background(), "schemaInstance init wrong, error: %+v", err)
 				panic(err)
 			}
-			SchemaInstance.EdgeTypeMap[units[0]] = typeId
+			schemaInstance.EdgeTypeMap[units[0]] = typeId
 		}
 	}
 }
 
-func (s *Schema) VertexType(name string) (int32, error){
-	typeId, ok := s.VertexTypeMap[name]
+func VertexType(name string) (int32, error){
+	typeId, ok := schemaInstance.VertexTypeMap[name]
 	if !ok {
 		return 0, errors.New("no such vertex type: " + name)
 	}
 	return typeId, nil
 }
 
-func (s *Schema) EdgeType(name string) int32{
-	typeId, ok := s.EdgeTypeMap[name]
+func EdgeType(name string) (int32, error){
+	typeId, ok := schemaInstance.EdgeTypeMap[name]
 	if !ok {
-		return 0
+		return 0, errors.New("no such edge type: " + name)
 	}
-	return typeId
+	return typeId, nil
 }

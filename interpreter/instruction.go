@@ -49,7 +49,7 @@ func bindVertex(t *transaction.Transaction, subject string, verb string, object 
 }
 
 func createVertex(t *transaction.Transaction, subject string, verb string, object string)error{
-	typeId, err := db_schema.SchemaInstance.VertexType(object)
+	typeId, err := db_schema.VertexType(object)
 	if err != nil {
 		return err
 	}

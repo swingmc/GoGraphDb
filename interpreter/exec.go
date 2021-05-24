@@ -43,7 +43,7 @@ func (i *Interpreter) judgeCommand(subject string, verb string, object string) (
 	if ok {
 		return commad, nil
 	}
-	if i.transaction.IsVertex(subject) && i.transaction.IsEdge(verb) && i.transaction.IsVertex(object) {
+	if i.transaction.IsVertex(subject) && i.transaction.IsVertex(object) {
 		return conf.GRAMMER_CREATE_EDGE, nil
 	}
 	return 0, errors.New("no match command!")

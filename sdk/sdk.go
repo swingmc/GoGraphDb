@@ -1,4 +1,4 @@
-package main
+package sdk
 
 import (
 	"GoGraphDb/db/db_model"
@@ -8,10 +8,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 )
 
 type InterpreterWrapper struct{
-	i interpreter.Interpreter
+	i *interpreter.Interpreter
 }
 
 type VertexWrapper struct{
@@ -31,10 +32,12 @@ type EdgeWrapper struct{
 }
 
 func NewInterpreter() *InterpreterWrapper {
-	return &InterpreterWrapper{}
+	return &InterpreterWrapper{
+		i: &interpreter.Interpreter{},
+	}
 }
 
-func wrapVertex(v *db_model.Vertex) *VertexWrapper{
+func wrapVertex(v *db_model.Vertex) *VertexWrapper {
 	oE := map[int64]bool{}
 	iE := map[int64]bool{}
 	for id, _ := range v.OutE{
@@ -52,7 +55,7 @@ func wrapVertex(v *db_model.Vertex) *VertexWrapper{
 	}
 }
 
-func wrapEdge(e *db_model.Edge) *EdgeWrapper{
+func wrapEdge(e *db_model.Edge) *EdgeWrapper {
 	return &EdgeWrapper{
 		Idntifier:  int64(e.Idntifier),
 		EdgeType:   e.EdgeType,
@@ -72,6 +75,10 @@ func (w *InterpreterWrapper) EndTransaction() error{
 
 func (w *InterpreterWrapper) RollbackTransaction() error{
 	return w.i.RollbackTransaction()
+}
+
+func (w *InterpreterWrapper) ExeDmlFile(f *os.File) error{
+	return w.i.ExeDmlFile(f)
 }
 
 func (w *InterpreterWrapper) RawSql(subject string, verb string, object string) (int32, error){

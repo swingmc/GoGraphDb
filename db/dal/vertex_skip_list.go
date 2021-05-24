@@ -223,7 +223,12 @@ func (sl *VertexSkipList) Flush() error{
 	for cur != nil {
 		latestVersion := cur.FindLatestVersion()
 		if latestVersion.changed != Nochange {
-			err := cur.vertex.FlushAsUndoBase(latestVersion.VersionId, cur.changed)
+			var err error
+			if cur.changed != conf.Modify_Nochange {
+				err = cur.vertex.FlushAsUndoBase(latestVersion.VersionId, conf.Modify_Create)
+			}else{
+				err = cur.vertex.FlushAsUndoBase(latestVersion.VersionId, latestVersion.changed)
+			}
 			if err != nil {
 				log.CtxError(context.Background(),"vertex undolog flush error: %+v", err)
 				cur = cur.next

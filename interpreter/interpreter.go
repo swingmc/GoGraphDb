@@ -14,6 +14,7 @@ import (
 
 type Interpreter struct {
 	transaction *transaction.Transaction
+	dataChan chan interface{}
 }
 
 func (i *Interpreter) ExeDmlFile(f *os.File) error{
@@ -125,6 +126,7 @@ func (i *Interpreter) BeginTransaction() error{
 		return err
 	}
 	i.transaction = transaction.NewTransaction()
+	i.dataChan = i.transaction.DataChan
 	log.CtxInfo(context.Background(),"start Transaction, version: %+v", i.transaction.Version)
 	return nil
 }
@@ -164,7 +166,7 @@ func (i *Interpreter) RollbackTransaction() error{
 }
 
 func (i *Interpreter) GetData() (interface{},error){
-	obj := <- i.transaction.DataChan
+	obj := <- i.dataChan
 	return obj, nil
 }
 

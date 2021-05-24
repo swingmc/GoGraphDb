@@ -169,3 +169,21 @@
 1621848440557468400::::2021-05-24 17:27:20.5574684 +0800 CST m=+1.369697001::::command error: no match command!, sub: allTransfered, verb: @Show, object: _
 1621848440557468400::::2021-05-24 17:27:20.5574684 +0800 CST m=+1.369697001::::command error: no match command!, sub: contents, verb: @FEBt, object: TopicHas
 1621848440557468400::::2021-05-24 17:27:20.5574684 +0800 CST m=+1.369697001::::command error: no match command!, sub: allContents, verb: @Show, object: _
+1621848973725065000::::2021-05-24 17:36:13.725065 +0800 CST m=+1.274483001::::transaction: 1621848973674105400 exec wrong, error: &{%!V(string=no such edge type: Transfer)}
+1621848973725065000::::2021-05-24 17:36:13.725065 +0800 CST m=+1.274483001::::command error: no match command!, sub: Likes, verb: FEBt, object: Like
+1621848973725065000::::2021-05-24 17:36:13.725065 +0800 CST m=+1.274483001::::command error: no match command!, sub: whoLikes, verb: @Show, object: _
+1621848973725065000::::2021-05-24 17:36:13.725065 +0800 CST m=+1.274483001::::command error: no match command!, sub: transfers, verb: @FEBt, object: Transfer
+1621848973725065000::::2021-05-24 17:36:13.725065 +0800 CST m=+1.274483001::::command error: no match command!, sub: allTransfered, verb: @Show, object: _
+1621848973725592700::::2021-05-24 17:36:13.7255927 +0800 CST m=+1.275010701::::command error: no match command!, sub: contents, verb: @FEBt, object: TopicHas
+1621848973725608300::::2021-05-24 17:36:13.7256083 +0800 CST m=+1.275026301::::command error: no match command!, sub: allContents, verb: @Show, object: _
+1621849058989534700::::2021-05-24 17:37:38.9895347 +0800 CST m=+1.210049501::::transaction: 1621849058936028200 exec wrong, error: &{%!V(string=no such edge type: Transfer)}
+1621849058989534700::::2021-05-24 17:37:38.9895347 +0800 CST m=+1.210049501::::command error: no match command!, sub: Likes, verb: @FEBt, object: Like
+1621849058989534700::::2021-05-24 17:37:38.9895347 +0800 CST m=+1.210049501::::command error: no match command!, sub: whoLikes, verb: @Show, object: _
+1621849058989534700::::2021-05-24 17:37:38.9895347 +0800 CST m=+1.210049501::::command error: no match command!, sub: transfers, verb: @FEBt, object: Transfer
+1621849058989534700::::2021-05-24 17:37:38.9895347 +0800 CST m=+1.210049501::::command error: no match command!, sub: allTransfered, verb: @Show, object: _
+1621849058990094500::::2021-05-24 17:37:38.9900945 +0800 CST m=+1.210609301::::command error: no match command!, sub: contents, verb: @FEBt, object: TopicHas
+1621849058990094500::::2021-05-24 17:37:38.9900945 +0800 CST m=+1.210609301::::command error: no match command!, sub: allContents, verb: @Show, object: _
+1621849175610746700::::2021-05-24 17:39:35.6107467 +0800 CST m=+1.293315901::::transaction: 1621849175559191100 exec wrong, error: &{%!V(string=no such edge type: Transfer)}
+1621849175610903900::::2021-05-24 17:39:35.6109039 +0800 CST m=+1.293473101::::transaction: 1621849175559191100 exec wrong, error: &{%!V(string=no such edge type: Transfer)}
+1621849418304502800::::2021-05-24 17:43:38.3045028 +0800 CST m=+1.265028701::::Interpreter command error, command: End
+1621849418304502800::::2021-05-24 17:43:38.3045028 +0800 CST m=+1.265028701::::interpreter change status error: Interpreter command error, command: End

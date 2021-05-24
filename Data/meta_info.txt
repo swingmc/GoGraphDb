@@ -9,3 +9,5 @@ Like::::3
 Forward::::4
 Comment::::5
 TopicHas::::6
+Transfer::::7
+Transfer::::8

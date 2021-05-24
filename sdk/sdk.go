@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	_"GoGraphDb/manager"
 	"GoGraphDb/db/db_model"
 	"GoGraphDb/interpreter"
 	"GoGraphDb/log"
@@ -93,17 +94,17 @@ func (w *InterpreterWrapper) GetData() (interface{},error){
 	}
 	vertexMap, ok := obj.(map[int64]*db_model.Vertex)
 	if ok {
-		wrapperMap := map[int64]*VertexWrapper{}
+		wrapperMap := map[int64]VertexWrapper{}
 		for id, vertex := range vertexMap{
-			wrapperMap[id] = wrapVertex(vertex)
+			wrapperMap[id] = *wrapVertex(vertex)
 		}
 		return wrapperMap, nil
 	}
 	edgeMap, ok := obj.(map[int64]*db_model.Edge)
 	if ok {
-		wrapperMap := map[int64]*EdgeWrapper{}
+		wrapperMap := map[int64]EdgeWrapper{}
 		for id, edge := range edgeMap{
-			wrapperMap[id] = wrapEdge(edge)
+			wrapperMap[id] = *wrapEdge(edge)
 		}
 		return wrapperMap, nil
 	}

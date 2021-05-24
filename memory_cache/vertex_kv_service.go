@@ -35,7 +35,7 @@ func RemoveVertex(versionId int64, id int64) error{
 	return VertexTree.Remove(versionId, id)
 }
 
-func ModifyVertex(versionId int64, id int64, vertexType *int32, properties map[string]string) error{
+func ModifyVertex(versionId int64, id int64, vertexType *int32, properties map[string]string, inE map[int64]bool, outE map[int64]bool) error{
 	if !checkWriteVertexParam(versionId, id){
 		log.CtxWarn(context.Background(), "ModifyVertex Param Error, id: %+v, version_id: %+v", id, versionId)
 		return errors.New("ModifyVertex Param Error")
@@ -60,6 +60,20 @@ func ModifyVertex(versionId int64, id int64, vertexType *int32, properties map[s
 		}else {
 			for key, value := range properties {
 				newVertex.Properties[key] = value
+			}
+		}
+	}
+	if inE != nil {
+		{
+			for key, value := range inE {
+				newVertex.InE[conf.EdgeIdentifier(key)] = value
+			}
+		}
+	}
+	if outE != nil {
+		{
+			for key, value := range outE {
+				newVertex.OutE[conf.EdgeIdentifier(key)] = value
 			}
 		}
 	}

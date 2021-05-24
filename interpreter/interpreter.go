@@ -145,6 +145,28 @@ func (i *Interpreter) EndTransaction() error{
 	return nil
 }
 
+func (i *Interpreter) RollbackTransaction() error{
+	if i.transaction == nil {
+		err := errors.New("No Executing Transation")
+		log.CtxError(context.Background(), err.Error())
+		return err
+	}
+	err := i.transaction.RollBack()
+	if err != nil {
+		log.CtxError(context.Background(), err.Error())
+		i.transaction.RollBack()
+		return err
+	}
+	log.CtxInfo(context.Background(),"rollback Transaction, version: %+v", i.transaction.Version)
+	i.transaction = nil
+	return nil
+}
+
+func (i *Interpreter) GetData() (interface{},error){
+	obj := <- i.transaction.DataChan
+	return obj, nil
+}
+
 func (i *Interpreter) RawSql(subject string, verb string, object string) (int32, error) {
 	log.CtxInfo(context.Background(), "Raw Sql: %+v", subject+" "+verb+" "+object)
 	return i.ExecuteSentence(subject, verb, object)

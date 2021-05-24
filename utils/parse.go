@@ -35,6 +35,14 @@ func CtxToString(ctx context.Context) string{
 	 return string(bytes)
 }
 
+func SetClone(set map[int64]bool) map[int64]bool {
+	clone := make(map[int64]bool)
+	for k, v := range set {
+		clone[k] = v
+	}
+	return clone
+}
+
 func MapClone(properties map[string]string) map[string]string {
 	clone := make(map[string]string)
 	for k, v := range properties {

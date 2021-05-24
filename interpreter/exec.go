@@ -8,6 +8,9 @@ import (
 )
 
 func (i *Interpreter) ExecuteSentence(subject string, verb string, object string) (int32, error){
+	if i.transaction == nil{
+		return 0, errors.New("no executing transaction, can't execute")
+	}
 	ctx := context.WithValue(context.Background(), "version_id", i.transaction.Version)
 	log.CtxInfo(ctx, "execute sentence: sub: %+v, verb: %+v, object: %+v", subject, verb, object)
 	command, err := i.judgeCommand(subject, verb, object)
